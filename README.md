@@ -6,13 +6,13 @@ Proyecto de arquitectura cliente-servidor distribuida desarrollado en **Node.js*
 
 ## Características Principales
 
-* **Comunicación Bi-direccional en Tiempo Real:** Uso de WebSockets con **Socket.IO** para actualizar instantáneamente la interfaz de usuario y el simulador de sensores sin refrescar la página[cite: 8, 13, 16].
+* **Comunicación Bi-direccional en Tiempo Real:** Uso de WebSockets con **Socket.IO** para actualizar instantáneamente la interfaz de usuario y el simulador de sensores sin refrescar la página.
 * **Lógica Domótica Inteligente & Reglas de Eficiencia Energética:**
   * **Ahorro energético:** Desconexión automática del aire acondicionado si se detecta ausencia de personas.
-  * **Protección solar:** Cierre automático de persianas si la luminosidad supera el 80%[cite: 9, 14].
+  * **Protección solar:** Cierre automático de persianas si la luminosidad supera el 80%.
   * **Control de temperatura:** Gestión automática del climatizador ante temperaturas extremas (< 15 °C o > 30 °C).
-* **Integración con API Meteorológica Externa:** Consulta asíncrona periódica (cada 10 min) a la API de `wttr.in` para obtener la temperatura exterior en Granada. Si hace más fresco fuera que dentro, el agente sugiere ventilación natural antes de encender el aire[cite: 10, 14].
-* **Persistencia de Datos en MongoDB:** Registro estructurado de eventos (lecturas de sensores, cambios de estado en actuadores y alarmas) con consultas optimizadas y asíncronas (`async/await`)[cite: 11, 14].
+* **Integración con API Meteorológica Externa:** Consulta asíncrona periódica (cada 10 min) a la API de `wttr.in` para obtener la temperatura exterior en Granada. Si hace más fresco fuera que dentro, el agente sugiere ventilación natural antes de encender el aire.
+* **Persistencia de Datos en MongoDB:** Registro estructurado de eventos (lecturas de sensores, cambios de estado en actuadores y alarmas) con consultas optimizadas y asíncronas (`async/await`).
 * **Notificaciones Nativas del Sistema Operativo:** Emisión de alertas emergentes de escritorio (`node-notifier`) ante situaciones críticas o recomendaciones del sistema.
 
 ---
