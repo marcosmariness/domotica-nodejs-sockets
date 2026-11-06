@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domótica - Panel de Sensores</title>
+    <link rel="stylesheet" href="stle.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container" style="max-width: 400px;">
+        <h1>📡 Simulación de Sensores</h1>
+
+        <div class="card">
+            <label class="stat-label">Temperatura (°C)</label>
+            <input type="number" id="temperatura" placeholder="Ej: 25" value="20">
+
+            <label class="stat-label">Luminosidad (%)</label>
+            <input type="number" id="luminosidad" placeholder="Ej: 80" value="40" min="0" max="100">
+
+            <div style="margin: 15px 0; display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" id="presencia" checked style="width: auto; margin: 0;">
+                <label class="stat-label" style="margin: 0;">Hay presencia en casa</label>
+            </div>
+
+            <button style="width: 100%; margin: 10px 0 0 0;" onclick="enviarDatos()">
+                Actualizar Sensores
+            </button>
+        </div>
+
+        <div class="card" style="margin-top: 20px;">
+            <h2 style="font-size: 1.2rem; margin-bottom: 15px;">⚙️ Estado de los Actuadores</h2>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 10px;">
+                <span class="stat-label">Persiana</span>
+                <span id="estado-persiana" style="font-weight: bold;">--</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span class="stat-label">Aire Acondicionado</span>
+                <span id="estado-aire" style="font-weight: bold;">--</span>
+            </div>
+        </div>
+
+        <p style="text-align: center; color: var(--text-light); font-size: 0.875rem;">
+            Los cambios se reflejarán en tiempo real en el panel de usuario.
+        </p>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // inicializa la conexión WebSocket
+        const socket = io();
+
+        // escucha cambios globales en el estado del servidor para actualizar la vista de los actuadores
+        socket.on('update-data', (data) => {
+            document.getElementById('estado-persiana').textContent = data.persiana;
+            document.getElementById('estado-aire').textContent = data.aire;
+        });
+
+        // función que se ejecuta al pulsar el botón "Actualizar Sensores"
+        function enviarDatos() {
+            // recoge los valores actuales de los campos del formulario
+            const temperatura = document.getElementById('temperatura').value;
+            const luminosidad = document.getElementById('luminosidad').value;
+            const presencia = document.getElementById('presencia').checked;
+
+            // validación básica para evitar enviar datos vacíos
+            if (temperatura === '' || luminosidad === '') {
+                alert('por favor, rellena ambos campos');
+                return;
+            }
+
+            // emite el evento 'sensor-data' al servidor con el nuevo JSON de datos
+            socket.emit('sensor-data', {
+                temperatura,
+                luminosidad,
+                presencia
+            });
+        }
+    </script>
+</body>
+
+</html>

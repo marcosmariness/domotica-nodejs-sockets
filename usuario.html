@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domótica - Panel de Usuario</title>
+    <link rel="stylesheet" href="stle.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 Panel de Control Domótico</h1>
+
+        <div class="grid">
+            <div class="card stat-card">
+                <div class="stat-label">Temperatura Interior</div>
+                <div id="temp" class="stat-value">--°C</div>
+            </div>
+            <div class="card stat-card">
+                <div class="stat-label">Temperatura Exterior (Granada)</div>
+                <div id="temp-ext" class="stat-value">--°C</div>
+            </div>
+            <div class="card stat-card">
+                <div class="stat-label">Luminosidad</div>
+                <div id="lum" class="stat-value">--%</div>
+            </div>
+            <div class="card stat-card">
+                <div class="stat-label">Presencia</div>
+                <div id="presencia" class="stat-value">--</div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>🪟 Persiana</h2>
+                <p id="estado-persiana">Estado: --</p>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="cambiarPersiana('ABIERTA')">Abrir</button>
+                    <button class="secondary" onclick="cambiarPersiana('CERRADA')">Cerrar</button>
+                </div>
+            </div>
+            <div class="card">
+                <h2>❄️ Aire Acondicionado</h2>
+                <p id="estado-aire">Estado: --</p>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="cambiarAire('ENCENDIDO')">Encender</button>
+                    <button class="danger" onclick="cambiarAire('APAGADO')">Apagar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🚨 Alarmas Recientes</h2>
+            <div id="lista-alarmas"></div>
+        </div>
+
+        <div class="card">
+            <h2>📜 Historial de Eventos</h2>
+            <div id="historial" class="history-list"></div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // inicializa la conexión WebSocket con el servidor
+        const socket = io();
+
+        // escucha el evento 'update-data' para actualizar los valores de la casa
+        socket.on('update-data', (data) => {
+            document.getElementById('temp').textContent = data.temperatura + '°C';
+            document.getElementById('temp-ext').textContent = data.tempExterior + '°C';
+            document.getElementById('lum').textContent = data.luminosidad + '%';
+            document.getElementById('estado-persiana').textContent = 'Estado: ' + data.persiana;
+            document.getElementById('estado-aire').textContent = 'Estado: ' + data.aire;
+            
+            // cambia el color del texto de presencia dependiendo de si hay alguien o no
+            const presenciaElem = document.getElementById('presencia');
+            presenciaElem.textContent = data.presencia ? 'SÍ' : 'NO';
+            presenciaElem.style.color = data.presencia ? 'var(--success)' : 'var(--danger)';
+        });
+
+        // escucha el evento 'alarm-update' para reconstruir la lista de alarmas
+        socket.on('alarm-update', (alarmas) => {
+            const container = document.getElementById('lista-alarmas');
+            container.innerHTML = ''; // limpia las alarmas antiguas
+            
+            // recorre las alarmas (invirtiendo el orden para ver la más reciente primero)
+            alarmas.slice().reverse().forEach(alarma => {
+                const div = document.createElement('div');
+                div.className = 'alarm-item';
+                div.textContent = alarma;
+                container.appendChild(div);
+            });
+        });
+
+        // escucha el evento 'history-update' para mostrar el registro de la base de datos
+        socket.on('history-update', (historial) => {
+            const container = document.getElementById('historial');
+            container.innerHTML = '';
+            
+            // coge el historial, lo invierte y muestra solo los 15 últimos eventos
+            historial.slice().reverse().slice(0, 15).forEach(evento => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                
+                let icon = '📝';
+                let desc = '';
+                
+                // formatea la descripción y el icono dependiendo del tipo de evento
+                if (evento.tipo === 'sensor') {
+                    icon = '📊';
+                    desc = `Sensores: ${evento.temperatura}°C, ${evento.luminosidad}%`;
+                } else if (evento.tipo === 'actuador') {
+                    icon = '⚙️';
+                    desc = `Actuador: ${evento.actuador} -> ${evento.estado}`;
+                } else if (evento.tipo === 'alarma') {
+                    icon = '⚠️';
+                    desc = `Alarma: ${evento.mensaje}`;
+                }
+
+                // convierte la fecha del servidor a la hora local del navegador
+                const fecha = new Date(evento.fecha).toLocaleTimeString();
+                item.innerHTML = `
+                    <span>${icon} ${desc}</span>
+                    <span class="history-time">${fecha}</span>
+                `;
+                container.appendChild(item);
+            });
+        });
+
+        // función llamada por los botones HTML para enviar una orden a la persiana
+        function cambiarPersiana(estado) {
+            socket.emit('actuador-change', { actuador: 'persiana', estado });
+        }
+
+        // función llamada por los botones HTML para enviar una orden al aire acondicionado
+        function cambiarAire(estado) {
+            socket.emit('actuador-change', { actuador: 'aire', estado });
+        }
+    </script>
+</body>
+</html>
