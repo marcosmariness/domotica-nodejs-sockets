@@ -4,7 +4,7 @@ Proyecto de arquitectura cliente-servidor distribuida desarrollado en **Node.js*
 
 ---
 
-## 🚀 Características Principales
+## Características Principales
 
 * **Comunicación Bi-direccional en Tiempo Real:** Uso de WebSockets con **Socket.IO** para actualizar instantáneamente la interfaz de usuario y el simulador de sensores sin refrescar la página[cite: 8, 13, 16].
 * **Lógica Domótica Inteligente & Reglas de Eficiencia Energética:**
@@ -17,14 +17,14 @@ Proyecto de arquitectura cliente-servidor distribuida desarrollado en **Node.js*
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
+## Tecnologías Utilizadas
 
-* **Backend:** Node.js (ES Modules, `"type": "module"`)[cite: 3, 14]
-* **Comunicación en tiempo real:** Socket.IO v4.8[cite: 3, 14]
-* **Base de Datos:** MongoDB v7.2 (Driver oficial para Node.js)[cite: 3, 14]
-* **Notificaciones del Sistema:** node-notifier v10.0[cite: 3, 14]
-* **Frontend:** HTML5, CSS3 (Variables CSS, Diseño Responsive con Inter Font) y JavaScript vanilla[cite: 13, 15, 16]
-* **API Externa:** API REST pública de clima (`wttr.in`)[cite: 10, 14]
+* **Backend:** Node.js (ES Modules, `"type": "module"`)
+* **Comunicación en tiempo real:** Socket.IO v4.8
+* **Base de Datos:** MongoDB v7.2 (Driver oficial para Node.js)
+* **Notificaciones del Sistema:** node-notifier v10.0
+* **Frontend:** HTML5, CSS3 (Variables CSS, Diseño Responsive con Inter Font) y JavaScript vanilla
+* **API Externa:** API REST pública de clima (`wttr.in`)
 
 ---
 
